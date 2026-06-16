@@ -1,0 +1,69 @@
+// ===== Pines =====
+#define PIN_MOTOR_ARRIBA 13
+#define PIN_MOTOR_ABAJO 12
+#define PIN_PWM          25
+
+#define BOTON_ABRIR      16
+#define BOTON_CERRAR      4
+
+#define FINAL_ABIERTO    18   // LOW = puerta abierta
+#define FINAL_CERRADO     5   // LOW = puerta cerrada
+
+void detenerMotor() {
+  analogWrite(PIN_PWM, 0);
+  digitalWrite(PIN_MOTOR_ARRIBA, LOW);
+  digitalWrite(PIN_MOTOR_ABAJO, LOW);
+}
+
+void abrirPuerta() {
+  if (digitalRead(FINAL_ABIERTO) == LOW) return;
+
+  digitalWrite(PIN_MOTOR_ARRIBA, HIGH);
+  digitalWrite(PIN_MOTOR_ABAJO, LOW);
+  analogWrite(PIN_PWM, 255);
+
+  while (digitalRead(FINAL_ABIERTO) == HIGH) {
+    // Esperar hasta llegar al final de carrera
+  }
+
+  detenerMotor();
+}
+
+void cerrarPuerta() {
+  if (digitalRead(FINAL_CERRADO) == LOW) return;
+
+  digitalWrite(PIN_MOTOR_ARRIBA, LOW);
+  digitalWrite(PIN_MOTOR_ABAJO, HIGH);
+  analogWrite(PIN_PWM, 255);
+
+  while (digitalRead(FINAL_CERRADO) == HIGH) {
+    // Esperar hasta llegar al final de carrera
+  }
+
+  detenerMotor();
+}
+
+void setup() {
+  pinMode(PIN_MOTOR_ARRIBA, OUTPUT);
+  pinMode(PIN_MOTOR_ABAJO, OUTPUT);
+  pinMode(PIN_PWM, OUTPUT);
+
+  pinMode(BOTON_ABRIR, INPUT);
+  pinMode(BOTON_CERRAR, INPUT);
+
+  pinMode(FINAL_ABIERTO, INPUT_PULLUP);
+  pinMode(FINAL_CERRADO, INPUT_PULLUP);
+
+  detenerMotor();
+}
+
+void loop() {
+
+  if (digitalRead(BOTON_ABRIR) == HIGH) {
+    abrirPuerta();
+  }
+
+  if (digitalRead(BOTON_CERRAR) == HIGH) {
+    cerrarPuerta();
+  }
+}
